@@ -8,6 +8,8 @@ const { photo, name, position, mail } = defineProps<{
     mail: string;
 }>();
 
+const onlineStatus = Math.floor(Math.random() * 10) + 1 <= 7 ? 'online' : 'offline';
+
 </script>
 
 <template>
@@ -16,7 +18,7 @@ const { photo, name, position, mail } = defineProps<{
             <div class="category__card-image">
                 <img :src="photo" alt="Ошибка загрузки">
             </div>
-            <div class="category__card-status"></div>
+            <div class="category__card-status" :class="onlineStatus"></div>
         </div>
         <div class="category__card-info">
             <div class="category__card-name">{{ name }}</div>
@@ -62,9 +64,16 @@ const { photo, name, position, mail } = defineProps<{
             width: 12px;
             height: 12px;
             border-radius: 50%;
-            background-color: var(--color-green);
             right: 10px;
             bottom: 9px;
+
+            &.online {
+                background-color: var(--color-green);
+            }
+
+            &.offline {
+                background-color: var(--color-red);
+            }
         }
 
         &-info {
