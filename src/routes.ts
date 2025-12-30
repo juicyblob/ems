@@ -8,6 +8,10 @@ export const router = createRouter({
             name: 'loading'
         },
         {
+            path: '/employees',
+            redirect: '/employees/all'
+        },
+        {
            path: '/employees/:alias',
            component: () => import('./views/MainView.vue'),
            name: 'employees'
