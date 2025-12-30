@@ -24,8 +24,6 @@ watch(alias, async (newAlias) => {
     await store.getEmpoyeesByAlias(newAlias);
 });
 
-
-
 </script>
 
 <template>
@@ -36,7 +34,7 @@ watch(alias, async (newAlias) => {
             <Button text="Добавить сотрудника" color="yellow" txt-color="dark"/>
         </div>
         <div class="category__employees">
-            <CategoryFilters active="date"/>
+            <CategoryFilters />
             <div class="category__cards">
                 <CategoryCard 
                 v-for="employee in store.categoryEmployees"

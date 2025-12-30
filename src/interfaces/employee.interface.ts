@@ -7,4 +7,6 @@ export interface Employee {
     photo: string;
     email: string;
     department: string;
+    age?: number;
+    created_at?: string;
 }

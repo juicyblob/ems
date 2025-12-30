@@ -1,11 +1,18 @@
 <script setup lang="ts">
-    const { active } = defineProps<{ active: string }>();
+import { useEmployeeStore } from '../stores/employee.store';
 
     const filters = [
         { name: 'По дате', query: 'date'},
         { name: 'По возрасту', query: 'age'},
         { name: 'По окладу', query: 'salary'}
     ];
+
+    const store = useEmployeeStore();
+
+    function changeSort(query: string) {
+        store.currentSort = query;
+    }
+    
 </script>
 
 <template>
@@ -14,7 +21,8 @@
         class="category__filter"
         v-for="filter in filters"
         :key="filter.query"
-        :class="filter.query == active ? 'active' : ''"
+        :class="filter.query == store.currentSort ? 'active' : ''"
+        @click="changeSort(filter.query)"
         >
         {{ filter.name }}
         </button>
