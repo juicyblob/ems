@@ -37,12 +37,6 @@
         gap: 20px;
         font-weight: 500;
         font-size: 32px;
-        
-        &__title {
-            font-size: 32px;
-            font-weight: 500;
-            color: var(--color-dark);
-        }
 
         &__counter {
             color: var(--color-gray);

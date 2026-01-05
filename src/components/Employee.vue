@@ -76,32 +76,34 @@ const employeeData = computed(() => {
 
 <template>
     <div class="employee">
-        <div class="employee__head">
-            <div class="employee__head-left">
-                <div class="employee__photo">
-                    <img :src="employee.photo" alt="Ошибка загрузки">
+        <div class="employee__detail">
+            <div class="employee__head">
+                <div class="employee__head-left">
+                    <div class="employee__photo">
+                        <img :src="employee.photo" alt="Ошибка загрузки">
+                    </div>
+                    <div class="employee__info">
+                    <div class="employee__info-title">{{ employee.name }}</div>
+                    <div class="employee__info-position">{{ employee.position }}</div>
+                    </div>
                 </div>
-                <div class="employee__info">
-                   <div class="employee__info-title">{{ employee.name }}</div>
-                   <div class="employee__info-position">{{ employee.position }}</div>
+                <div class="employee__head-right">
+                    <Button text="Вернуться назад" color="blue" txt-color="white" @click="emit('backward')"/>
                 </div>
             </div>
-            <div class="employee__head-right">
-                <Button text="Вернуться назад" color="blue" txt-color="white" @click="emit('backward')"/>
+            <div class="employee__data">
+                <div class="employee__data-item"
+                v-for="employee in employeeData"
+                :key="employee.id"
+                >
+                    <div class="employee__data-label">{{ employee.label }}</div>
+                    <div class="employee__data-value">{{ employee.value }}</div>
+                </div>
             </div>
-        </div>
-        <div class="employee__data">
-            <div class="employee__data-item"
-            v-for="employee in employeeData"
-            :key="employee.id"
-            >
-                <div class="employee__data-label">{{ employee.label }}</div>
-                <div class="employee__data-value">{{ employee.value }}</div>
+            <div class="employee__buttons">
+                <Button text="Редактировать" color="yellow" txt-color="dark" />
+                <Button text="Удалить" color="red" txt-color="white" />
             </div>
-        </div>
-        <div class="employee__buttons">
-            <Button text="Редактировать" color="yellow" txt-color="dark" />
-            <Button text="Удалить" color="red" txt-color="white" />
         </div>
     </div>
 </template>

@@ -17,13 +17,13 @@ async function checkEmployeesData() {
             console.error(e);
         } finally {
             setTimeout(() => {
-                router.push({ name: 'employees', params: { alias: 'all'}});
+                router.push({ name: 'employee-list', params: { alias: 'all'}});
             }, 1000);
         }
         
     } else {
         setTimeout(() => {
-            router.push({ name: 'employees', params: { alias: 'all'}});
+            router.push({ name: 'employee-list', params: { alias: 'all'}});
         }, 1000);
     }
 }

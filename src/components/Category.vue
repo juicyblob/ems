@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onBeforeRouteUpdate, useRoute } from 'vue-router';
+import { onBeforeRouteUpdate, useRoute, useRouter } from 'vue-router';
 import { useEmployeeStore } from '../stores/employee.store';
 import Button from './ButtonDefault.vue';
 import { computed, onMounted, ref, watch } from 'vue';
@@ -10,6 +10,7 @@ import Employee from './Employee.vue';
 
 const store = useEmployeeStore();
 const route = useRoute();
+const router = useRouter();
 const showEmployeeDetails = ref<boolean>(false);
 
 onMounted( async () => {
@@ -36,14 +37,18 @@ async function selectEmployee(id: number) {
     showEmployeeDetails.value = true;
 }
 
+function openAddForm() {
+    router.push({ name: 'employee-new' });
+}
+
 </script>
 
 <template>
     <div class="category" v-if="!showEmployeeDetails">
         <CategoryHeader />
         <div class="category__buttons">
-            <Button text="Выгрузить в Excel" color="blue" txt-color="white"/>
-            <Button text="Добавить сотрудника" color="yellow" txt-color="dark"/>
+            <Button text="Выгрузить в Excel" color="blue" txt-color="white" />
+            <Button text="Добавить сотрудника" color="yellow" txt-color="dark" @click="openAddForm" />
         </div>
         <div class="category__employees">
             <CategoryFilters />
@@ -61,7 +66,7 @@ async function selectEmployee(id: number) {
             </div>
         </div>
     </div>
-    <Employee v-else :employee="store.selectEmployee" @backward="() => showEmployeeDetails"/>
+    <Employee v-else :employee="store.selectEmployee" @backward="() => showEmployeeDetails = false"/>
 </template>
 
 <style scoped lang="scss">

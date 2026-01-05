@@ -12,7 +12,7 @@
 <template>
     <nav class="categories">
         <RouterLink
-        exact-active-class="active"
+        active-class="active"
         class="categories__link" 
         :to="`/employees/${cat.alias}`"
         v-for="cat in store.categories"

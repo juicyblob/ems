@@ -5,6 +5,7 @@
   --color-dark: #110F36;
   --color-gray: #9e9eae;
   --color-light-gray: #EFEFEF;
+  --color-label: #B2B2B2;
   --color-silver: #EAEAEA;
   --color-yellow: #FFBE1A;
   --color-green: #66B436;
@@ -30,6 +31,12 @@ body {
 *::after {
   box-sizing: border-box;
   margin: 0;
+}
+
+h1 {
+  font-size: 32px;
+  font-weight: 500;
+  color: var(--color-dark);
 }
 
 

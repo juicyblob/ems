@@ -1,6 +1,5 @@
 <script setup lang="ts">
   import IconLogo from '../assets/svg/IconLogo.vue';
-  import Category from '../components/Category.vue';
   import CategoryList from '../components/CategoryList.vue';
   import Search from '../components/Search.vue';
   import Version from '../components/Version.vue';
@@ -19,7 +18,7 @@
         <div class="dashboard__content">
             <Search />
             <div class="dashboard__content-body">
-                <Category />
+                <RouterView />
             </div>
         </div>
     </div>

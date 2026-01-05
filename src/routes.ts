@@ -14,8 +14,20 @@ export const router = createRouter({
         {
            path: '/employees/:alias',
            component: () => import('./views/MainView.vue'),
-           name: 'employees'
-        },
+           name: 'employees',
+           children: [
+            {
+                path: '',
+                name: 'employee-list',
+                component: () => import('./components/Category.vue')
+            },
+            {
+                path: 'new',
+                name: 'employee-new',
+                component: () => import('./components/EmployeeForm.vue')
+            }
+           ]
+        }
     ],
     history: createWebHistory(),
 });
