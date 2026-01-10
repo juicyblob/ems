@@ -7,16 +7,19 @@ import CategoryCard from './CategoryCard.vue';
 import CategoryFilters from './CategoryFilters.vue';
 import CategoryHeader from './CategoryHeader.vue';
 import Employee from './Employee.vue';
+import Notification from './Notification.vue';
+import { useNotificationStore } from '../stores/notification.store';
 
-const store = useEmployeeStore();
+const storeEmployee = useEmployeeStore();
+const storeNotification = useNotificationStore();
 const route = useRoute();
 const router = useRouter();
 const showEmployeeDetails = ref<boolean>(false);
 
 onMounted( async () => {
     const alias = route.path.replace('/employees/', '');
-    await store.fetchEmployees('all');
-    await store.getEmpoyeesByAlias(alias);
+    await storeEmployee.fetchEmployees('all');
+    await storeEmployee.getEmpoyeesByAlias(alias);
 });
 
 onBeforeRouteUpdate((_to, _from, next) => {
@@ -29,11 +32,11 @@ const alias = computed(() => {
 });
 
 watch(alias, async (newAlias) => {
-    await store.getEmpoyeesByAlias(newAlias);
+    await storeEmployee.getEmpoyeesByAlias(newAlias);
 });
 
 async function selectEmployee(id: number) {
-    await store.getEmployeeById(id);
+    await storeEmployee.getEmployeeById(id);
     showEmployeeDetails.value = true;
 }
 
@@ -54,7 +57,7 @@ function openAddForm() {
             <CategoryFilters />
             <div class="category__cards">
                 <CategoryCard
-                v-for="employee in store.categoryEmployees"
+                v-for="employee in storeEmployee.categoryEmployees"
                 :key="employee.id"
                 :photo="employee.photo"
                 :name="employee.name"
@@ -66,7 +69,12 @@ function openAddForm() {
             </div>
         </div>
     </div>
-    <Employee v-else :employee="store.selectEmployee" @backward="() => showEmployeeDetails = false"/>
+    <Employee 
+    v-else 
+    :employee="storeEmployee.selectEmployee" 
+    @backward="() => showEmployeeDetails = false"
+    />
+    <Notification :show="storeNotification.show" :text="storeNotification.message" />
 </template>
 
 <style scoped lang="scss">

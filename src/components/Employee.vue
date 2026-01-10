@@ -1,13 +1,16 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, nextTick, ref } from 'vue';
 import type { Employee } from '../interfaces/employee.interface';
 import Button from './ButtonDefault.vue';
 import { useEmployeeStore } from '../stores/employee.store';
 import { useRoute } from 'vue-router';
 import PopUpConfirm from './PopUpConfirm.vue';
+import { notifications } from '../utils/constants';
+import { useNotificationStore } from '../stores/notification.store';
 
 const { employee } = defineProps<{ employee: Employee}>();
-const store = useEmployeeStore();
+const storeEmployee = useEmployeeStore();
+const storeNotification = useNotificationStore();
 const route = useRoute();
 const popUpIsOpened = ref<boolean>(false);
 
@@ -48,11 +51,13 @@ function calcEmployeeExpirience(hireDate: string) {
 }
 
 async function removeEmployee() {
-    await store.deleteEmployee(employee.id ?? 0);
+    await storeEmployee.deleteEmployee(employee.id ?? 0);
     const alias = route.params.alias;
-    await store.fetchEmployees('all');
-    await store.getEmpoyeesByAlias(String(alias));
+    await storeEmployee.fetchEmployees('all');
+    await storeEmployee.getEmpoyeesByAlias(String(alias));
     emit('backward');
+    nextTick();
+    storeNotification.showNotification(notifications.removed);
 }
 
 const employeeData = computed(() => {
@@ -174,8 +179,6 @@ function popUpClose() {
                 align-items: center;
                 gap: 24px;
             }
-
-            &-right {}
         }
 
         &__photo {

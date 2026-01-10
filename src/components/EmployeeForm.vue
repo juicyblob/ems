@@ -5,10 +5,13 @@
     import type { Employee } from '../interfaces/employee.interface';
     import type { FormErrors } from '../interfaces/errors.interface';
     import { useEmployeeStore } from '../stores/employee.store';
+    import { useNotificationStore } from '../stores/notification.store';
+    import { notifications } from '../utils/constants';
 
     const router = useRouter();
     const route = useRoute();
-    const store = useEmployeeStore();
+    const storeEmployee = useEmployeeStore();
+    const storeNotification = useNotificationStore();
     const department = ref(route.params.alias);
     const employeeData = ref<Employee>({
         name: '',
@@ -64,11 +67,19 @@
             return;
         }
         // Отправка данных
-        store.createEmployee(employeeData.value);
-        const alias = route.params.alias;
-        await store.fetchEmployees('all');
-        await store.getEmpoyeesByAlias(String(alias));
-        router.push({ name: 'employee-list', params: { alias: alias}});
+        try {
+            storeEmployee.createEmployee(employeeData.value);
+            const alias = route.params.alias;
+
+            await storeEmployee.fetchEmployees('all');
+            await storeEmployee.getEmpoyeesByAlias(String(alias));
+
+            storeNotification.showNotification(notifications.added);
+            router.push({ name: 'employee-list', params: { alias: alias}});
+        } catch {
+            storeNotification.showNotification(notifications.error.added);
+        }
+        
     }
 
     function goBack() {
