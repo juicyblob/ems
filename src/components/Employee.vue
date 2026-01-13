@@ -3,7 +3,7 @@ import { computed, nextTick, ref } from 'vue';
 import type { Employee } from '../interfaces/employee.interface';
 import Button from './ButtonDefault.vue';
 import { useEmployeeStore } from '../stores/employee.store';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import PopUpConfirm from './PopUpConfirm.vue';
 import { notifications } from '../utils/constants';
 import { useNotificationStore } from '../stores/notification.store';
@@ -12,6 +12,7 @@ const { employee } = defineProps<{ employee: Employee}>();
 const storeEmployee = useEmployeeStore();
 const storeNotification = useNotificationStore();
 const route = useRoute();
+const router = useRouter();
 const popUpIsOpened = ref<boolean>(false);
 
 const emit = defineEmits<{
@@ -58,6 +59,7 @@ async function removeEmployee() {
     emit('backward');
     nextTick();
     storeNotification.showNotification(notifications.removed);
+    unlockScroll();
 }
 
 const employeeData = computed(() => {
@@ -91,17 +93,12 @@ const employeeData = computed(() => {
     ]
 });
 
-let scrollbarWidth = 0;
-
 function lockScroll() {
-  scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
-  document.body.style.paddingRight = `${scrollbarWidth}px`
-  document.body.style.overflow = 'hidden'
+  document.body.style.overflow = 'hidden';
 }
 
 function unlockScroll() {
-  document.body.style.paddingRight = ''
-  document.body.style.overflow = ''
+  document.body.style.overflow = '';
 }
 
 function popUpOpen() {
@@ -112,6 +109,10 @@ function popUpOpen() {
 function popUpClose() {
     unlockScroll();
     popUpIsOpened.value = false;
+}
+
+function openEditForm() {
+    router.push({ name: 'employee-edit' });
 }
 
 </script>
@@ -143,7 +144,7 @@ function popUpClose() {
                 </div>
             </div>
             <div class="employee__buttons">
-                <Button text="Редактировать" color="yellow" txt-color="dark" />
+                <Button text="Редактировать" color="yellow" txt-color="dark" @click="openEditForm" />
                 <Button text="Удалить" color="red" txt-color="white" @click="popUpOpen" />
             </div>
         </div>

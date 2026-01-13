@@ -24,7 +24,18 @@ export const router = createRouter({
             {
                 path: 'new',
                 name: 'employee-new',
-                component: () => import('./components/EmployeeForm.vue')
+                component: () => import('./components/EmployeeForm.vue'),
+                props: {
+                    mode: 'new'
+                }
+            },
+            {
+                path: 'edit',
+                name: 'employee-edit',
+                component: () => import('./components/EmployeeForm.vue'),
+                props: {
+                    mode: 'edit'
+                }
             }
            ]
         }

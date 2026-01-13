@@ -110,9 +110,19 @@ export const useEmployeeStore = defineStore('employee', () => {
             console.log('Сотрудник успешно удален');
         })
         .catch((err) => {
-            console.error('Ошибка удаления сотрудника :' + err.message);
+            console.error('Ошибка удаления сотрудника: ' + err.message);
         });
     }
 
-    return { employees, categoryEmployees, currentSort, selectEmployee, fetchEmployees, uploadDemoEmployees, getEmpoyeesByAlias, getEmployeeById, createEmployee, deleteEmployee }
+    async function updateEmployee(id: number, data: Record<string, string | number>) {
+        await axios.put(`${API_ROUTES.employees}/${id}`, data)
+        .then(() => {
+            console.log('Данные сотрудника успешно изменены');
+        })
+        .catch((err) => {
+            console.error('Ошибка изменения данных сотрудника: ' + err.message);
+        });
+    }
+
+    return { employees, categoryEmployees, currentSort, selectEmployee, fetchEmployees, uploadDemoEmployees, getEmpoyeesByAlias, getEmployeeById, createEmployee, deleteEmployee, updateEmployee }
 });

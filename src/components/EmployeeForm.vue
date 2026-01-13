@@ -1,12 +1,15 @@
 <script setup lang="ts">
     import { useRoute, useRouter } from 'vue-router';
     import ButtonDefault from './ButtonDefault.vue';
-    import { ref } from 'vue';
+    import { nextTick, onMounted, ref } from 'vue';
     import type { Employee } from '../interfaces/employee.interface';
     import type { FormErrors } from '../interfaces/errors.interface';
     import { useEmployeeStore } from '../stores/employee.store';
     import { useNotificationStore } from '../stores/notification.store';
     import { notifications } from '../utils/constants';
+
+    const { mode } = defineProps<{ mode: 'new' | 'edit'}>();
+    const title = mode == 'new' ? 'Заполните данные нового сотрудника' : 'Редактирование данных сотрудника';
 
     const router = useRouter();
     const route = useRoute();
@@ -22,6 +25,25 @@
         email: '',
         department: String(department.value),
     });
+
+    function initEmployeeData() {
+        if (mode == 'edit' && storeEmployee.selectEmployee) {
+            employeeData.value = {
+                name: storeEmployee.selectEmployee.name,
+                birthday: storeEmployee.selectEmployee.birthday,
+                position: storeEmployee.selectEmployee.position,
+                salary: storeEmployee.selectEmployee.salary,
+                photo: storeEmployee.selectEmployee.photo,
+                email: storeEmployee.selectEmployee.email,
+                department: storeEmployee.selectEmployee.department
+            }
+        }
+    }
+
+    onMounted(() => {
+        initEmployeeData();
+    });
+
     const errors = ref<FormErrors>({});
 
     function validateForm() {
@@ -60,26 +82,53 @@
 
     async function saveEmployee() {
         if (!validateForm()) {
-            //показываем ошибки
             for (let error of Object.values(errors.value)) {
                 console.log(error);
             }
             return;
         }
-        // Отправка данных
+
         try {
-            storeEmployee.createEmployee(employeeData.value);
+            if (mode == 'new') {
+                await storeEmployee.createEmployee(employeeData.value);
+            } else {
+                await updateEmployee();
+            }
+            
             const alias = route.params.alias;
 
             await storeEmployee.fetchEmployees('all');
             await storeEmployee.getEmpoyeesByAlias(String(alias));
 
-            storeNotification.showNotification(notifications.added);
-            router.push({ name: 'employee-list', params: { alias: alias}});
+            nextTick(() => {
+                if (mode == 'new') {
+                    storeNotification.showNotification(notifications.added);
+                } else {
+                    storeNotification.showNotification(notifications.edited);
+                }
+                router.push({ name: 'employee-list', params: { alias: alias}});
+            });
+            
         } catch {
-            storeNotification.showNotification(notifications.error.added);
+            if (mode == 'new') {
+                storeNotification.showNotification(notifications.error.added);
+            } else {
+                storeNotification.showNotification(notifications.error.edited);
+            }
+            
         }
         
+    }
+
+    async function updateEmployee() {
+        const current = storeEmployee.selectEmployee;
+        const newEmployeeData = Object.fromEntries(
+            Object.entries(employeeData.value).filter(([key, value]) => {
+                return value !== current[key as keyof typeof current];
+            })
+        );
+        if (Object.keys(newEmployeeData).length == 0) return;
+        await storeEmployee.updateEmployee(current.id ?? 0, newEmployeeData);
     }
 
     function goBack() {
@@ -89,7 +138,7 @@
 </script>
 
 <template>
-    <h1 class="employee__form-title">Заполните данные нового сотрудника</h1>
+    <h1 class="employee__form-title">{{ title }}</h1>
     <div class="employee">
         <form class="employee__form" @submit.prevent="saveEmployee">
         <div class="employee__form-row">
@@ -198,7 +247,7 @@
         </div>
         <div class="employee__form-buttons">
             <ButtonDefault type="submit" text="Сохранить" color="yellow" txt-color="dark" />
-            <ButtonDefault text="Отмена" color="red" txt-color="white" @click="goBack" />
+            <ButtonDefault type="button" text="Отмена" color="red" txt-color="white" @click="goBack" />
         </div>
         </form>       
     </div>
