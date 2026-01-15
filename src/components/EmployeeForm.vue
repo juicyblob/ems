@@ -1,7 +1,7 @@
 <script setup lang="ts">
     import { useRoute, useRouter } from 'vue-router';
     import ButtonDefault from './ButtonDefault.vue';
-    import { nextTick, onMounted, ref } from 'vue';
+    import { nextTick, onMounted, ref, watch } from 'vue';
     import type { Employee } from '../interfaces/employee.interface';
     import type { FormErrors } from '../interfaces/errors.interface';
     import { useEmployeeStore } from '../stores/employee.store';
@@ -16,7 +16,8 @@
     const route = useRoute();
     const storeEmployee = useEmployeeStore();
     const storeNotification = useNotificationStore();
-    const department = ref(route.params.alias);
+    const alias = String(route.params.alias);
+    const department = ref<string>(alias);
     const loader = ref<boolean>(false);
     const employeeData = ref<Employee>({
         name: '',
@@ -28,6 +29,10 @@
         department: String(department.value),
     });
 
+    watch(department, (newDepartment) => {
+        employeeData.value.department = newDepartment
+    });
+
     function initEmployeeData() {
         if (mode == 'edit' && storeEmployee.selectEmployee) {
             employeeData.value = {
@@ -37,8 +42,9 @@
                 salary: storeEmployee.selectEmployee.salary,
                 photo: storeEmployee.selectEmployee.photo,
                 email: storeEmployee.selectEmployee.email,
-                department: storeEmployee.selectEmployee.department
+                department: ''
             }
+            department.value = storeEmployee.selectEmployee.department;
         }
     }
 
