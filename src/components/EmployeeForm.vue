@@ -7,6 +7,7 @@
     import { useEmployeeStore } from '../stores/employee.store';
     import { useNotificationStore } from '../stores/notification.store';
     import { notifications } from '../utils/constants';
+    import SubmitLoader from './SubmitLoader.vue';
 
     const { mode } = defineProps<{ mode: 'new' | 'edit'}>();
     const title = mode == 'new' ? 'Заполните данные нового сотрудника' : 'Редактирование данных сотрудника';
@@ -16,6 +17,7 @@
     const storeEmployee = useEmployeeStore();
     const storeNotification = useNotificationStore();
     const department = ref(route.params.alias);
+    const loader = ref<boolean>(false);
     const employeeData = ref<Employee>({
         name: '',
         birthday: '',
@@ -88,6 +90,8 @@
             return;
         }
 
+        loader.value = true;
+
         try {
             if (mode == 'new') {
                 await storeEmployee.createEmployee(employeeData.value);
@@ -106,10 +110,14 @@
                 } else {
                     storeNotification.showNotification(notifications.edited);
                 }
-                router.push({ name: 'employee-list', params: { alias: alias}});
+                setTimeout(() => {
+                    loader.value = false;
+                    router.push({ name: 'employee-list', params: { alias: alias}});
+                }, 600);
             });
             
         } catch {
+            loader.value = false;
             if (mode == 'new') {
                 storeNotification.showNotification(notifications.error.added);
             } else {
@@ -251,7 +259,7 @@
         </div>
         </form>       
     </div>
-
+    <SubmitLoader :show="loader"/>
 </template>
 
 <style scoped lang="scss">

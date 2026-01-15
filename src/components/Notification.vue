@@ -9,7 +9,7 @@
 
 <template>
    <Transition name="fade">
-    <div v-show="show" class="notification">
+    <div v-if="show" class="notification">
         {{ text }}
     </div>
    </Transition>
@@ -30,11 +30,11 @@
 
     .fade-enter-active,
     .fade-leave-active {
-        transition: opacity .6s ease-out;
+        transition: opacity .6s ease;
     }
 
     .fade-enter-from,
-    .fade-leave.to {
+    .fade-leave-to {
         opacity: 0;
     }
 </style>
