@@ -22,8 +22,8 @@ const emit = defineEmits<{
             <div v-show="open" class="pop-up">
              <div class="pop-up__body">
                     <div class="pop-up__body-title">{{ title }}</div>
-                    <div class="pop-up__body-employee-name">{{ name }}</div>
-                    <div v-if="hasName" class="pop-up__body-text">{{ text }}</div>
+                    <div v-if="hasName" class="pop-up__body-employee-name">{{ name }}</div>
+                    <div class="pop-up__body-text">{{ text }}</div>
                     <div class="pop-up__body-buttons">
                         <ButtonDefault text="Подтверждаю" color="blue" txt-color="white" @click="emit('ok')" />
                         <ButtonDefault text="Отменить" color="red" txt-color="white" @click="emit('cancel')" />

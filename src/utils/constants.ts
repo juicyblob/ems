@@ -6,11 +6,13 @@ export const notifications = {
     error: {
         added: 'Ошибка при добавлении сотрудника',
         removed: 'Ошибка при удалении сотрудника',
-        edited: 'Ошибка при редактировании сотрудника'
+        edited: 'Ошибка при редактировании сотрудника',
+        some: 'Что-то пошло не так'
     },
     archive: {
         restore: 'Сотрудник восстановлен из архива',
-        removed: 'Сотрудник удален из архива'
+        removed: 'Сотрудник удален из архива',
+        clear: 'Все сотрудники из архива удалены'
     }
 }
-export type ModalAction = 'restore' | 'remove';
+export type ModalAction = 'restore' | 'remove' | 'clear';

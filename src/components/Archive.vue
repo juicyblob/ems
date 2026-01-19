@@ -10,6 +10,7 @@ import { notifications, type ModalAction } from '../utils/constants';
 import { useRouter } from 'vue-router';
 import { useNotificationStore } from '../stores/notification.store';
 import { useEmployeeStore } from '../stores/employee.store';
+import Notification from './Notification.vue';
 
 const storeArchive = useArchiveStore();
 const storeCategory = useCategoryStore();
@@ -24,6 +25,7 @@ const counter = computed(() => {
 const popUpIsOpened = ref<boolean>(false);
 const popUpTitle = ref<string>('');
 const popUpText = ref<string>('');
+const popUpHasName = ref<boolean>(true);
 const popUpEmployeeName = ref<string>('');
 const popUpMode = ref<ModalAction>();
 
@@ -36,7 +38,8 @@ function resetData() {
     popUpText.value = '';
     popUpEmployeeName.value = '';
     popUpMode.value = undefined;
-    storeArchive.selectEmloyeeId = 0;
+    popUpHasName.value = true;
+    storeArchive.selectEmployeeId = 0;
     storeArchive.selectEmployeeDepartment = '';
 }
 
@@ -45,28 +48,63 @@ function popUpOpen(title: string, text: string, name: string, mode: ModalAction,
     popUpTitle.value = title;
     popUpText.value = text;
     popUpEmployeeName.value = name;
-    popUpIsOpened.value = true;
     popUpMode.value = mode;
-    storeArchive.selectEmloyeeId = id;
+    storeArchive.selectEmployeeId = id;
     storeArchive.selectEmployeeDepartment = department;
+    popUpIsOpened.value = true;
+}
+
+function openConfirmClear(mode: ModalAction) {
+    document.body.style.overflow = 'hidden';
+    popUpTitle.value = 'Вы собираетесь очистить архив';
+    popUpText.value = 'Подтверждаете операцию?';
+    popUpHasName.value = false;
+    popUpMode.value = mode;
+    popUpIsOpened.value = true;
 }
 
 function popUpClose() {
-    document.body.style.overflow = '';
-    resetData();
     popUpIsOpened.value = false;
+    setTimeout(() => {
+        document.body.style.overflow = '';
+        resetData();
+    }, 500);
 }
 
 async function popUpAction() {
-    if (popUpMode.value == 'restore') {
-        await storeArchive.restoreEmployee(storeArchive.selectEmloyeeId);
-        await storeEmployee.fetchEmployees('all');
-        await storeEmployee.getEmpoyeesByAlias(storeArchive.selectEmployeeDepartment);
-        router.push({ name: 'employee-list', params: { alias: storeArchive.selectEmployeeDepartment }});
-        storeNotification.showNotification(notifications.archive.restore);
+    try {
+        if (popUpMode.value == 'restore') {
+            await storeArchive.restoreEmployee(storeArchive.selectEmployeeId);
+            await storeEmployee.fetchEmployees('all');
+            await storeEmployee.getEmpoyeesByAlias(storeArchive.selectEmployeeDepartment);
+
+            router.push({ name: 'employee-list', params: { alias: storeArchive.selectEmployeeDepartment }});
+            storeNotification.showNotification(notifications.archive.restore);
+
+        } else if (popUpMode.value == 'remove') {
+            await storeArchive.removeEmployee(storeArchive.selectEmployeeId);
+            await storeArchive.fetchEmployees();
+            await storeCategory.getCategoryCounters();
+
+            storeNotification.showNotification(notifications.archive.removed);
+
+        } else if (popUpMode.value == 'clear') {
+            await storeArchive.clearArchive();
+            await storeArchive.fetchEmployees();
+            await storeCategory.getCategoryCounters();
+
+            storeNotification.showNotification(notifications.archive.clear);
+        }
+
+    } catch (err) {
+        if (err instanceof Error) {
+            storeNotification.showNotification(`${notifications.error.some}: ${err.message}`);
+        }
+    } finally {
+        document.body.style.overflow = '';
+        popUpClose();
     }
-    document.body.style.overflow = '';
-    resetData();
+    
 }
 
 </script>
@@ -78,7 +116,7 @@ async function popUpAction() {
             <div class="archive__head-counter">{{ counter }}</div>
         </div>
         <div class="archive__buttons">
-            <ButtonDefault text="Очистить архив" color="red" txt-color="white" />
+            <ButtonDefault text="Очистить архив" color="red" txt-color="white" @click="openConfirmClear('clear')" />
         </div>
         <div class="archive__employees">
             <CategoryFilters mode="archive" />
@@ -100,12 +138,13 @@ async function popUpAction() {
     <PopUpConfirm 
     :open="popUpIsOpened"
     :title="popUpTitle"
-    :has-name="true"
+    :has-name="popUpHasName"
     :name="popUpEmployeeName"
     :text="popUpText"
     @cancel="popUpClose"
     @ok="popUpAction"
     />
+    <Notification :show="storeNotification.show" :text="storeNotification.message" />
 </template>
 
 <style scoped lang="scss">

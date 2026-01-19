@@ -9,7 +9,7 @@ export const useArchiveStore = defineStore('archive', () => {
 
     const employees = ref<Employee[]>([]);
     const currentSort = ref<string>('date');
-    const selectEmloyeeId = ref<number>(0);
+    const selectEmployeeId = ref<number>(0);
     const selectEmployeeDepartment = ref<string>('');
 
     watch(currentSort, async (newSort) => {
@@ -49,6 +49,14 @@ export const useArchiveStore = defineStore('archive', () => {
         await axios.post(`${API_ROUTES.archive}/${id}/restore`);
     }
 
-    return { employees, currentSort, selectEmloyeeId, selectEmployeeDepartment, fetchEmployees, restoreEmployee }
+    async function removeEmployee(id: number) {
+        await axios.delete(`${API_ROUTES.archive}/${id}`);
+    }
+
+    async function clearArchive() {
+        await axios.delete(API_ROUTES.archive);
+    }
+
+    return { employees, currentSort, selectEmployeeId, selectEmployeeDepartment, fetchEmployees, restoreEmployee, removeEmployee, clearArchive }
 
 });

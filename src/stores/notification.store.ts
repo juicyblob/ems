@@ -11,7 +11,7 @@ export const useNotificationStore = defineStore('notification', () => {
         message.value = text;
         setTimeout(() => {
             show.value = false;
-        }, 2000);
+        }, 3000);
     }
 
     return { show, message, showNotification };
