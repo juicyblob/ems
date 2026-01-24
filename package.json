@@ -1,13 +1,22 @@
 {
-  "name": "ems",
+  "name": "employees-management-system",
+  "description": "Web-based system for managing company employees with filtering, archiving, and data export features.",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.4",
   "type": "module",
+
+  "author": {
+    "name": "Андрей Самойленко",
+    "email": "hotalert@vk.com"
+  },
+
+  "license": "UNLICENSED",
   "scripts": {
     "dev": "vite --host",
     "build": "vue-tsc -b && vite build",
     "preview": "vite preview"
   },
+
   "dependencies": {
     "axios": "^1.13.2",
     "pinia": "^3.0.4",
@@ -17,6 +26,7 @@
     "vue3-json-excel": "^1.0.10-alpha",
     "vue3-spinners": "^1.3.3"
   },
+  
   "devDependencies": {
     "@types/node": "^24.10.1",
     "@vitejs/plugin-vue": "^6.0.1",
