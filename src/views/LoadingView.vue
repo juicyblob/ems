@@ -2,16 +2,14 @@
 import { VueSpinner } from 'vue3-spinners';
 import IconLogo from '../assets/svg/IconLogo.vue';
 import { useEmployeeStore } from '../stores/employee.store';
-import { USER_ID_KEY } from '../utils/constants';
 import { useRouter } from 'vue-router';
 
-let userId = localStorage.getItem(USER_ID_KEY);
 const router = useRouter();
 const isDesktop = window.innerWidth >= 1024;
 
 async function checkEmployeesData() {
     const store = useEmployeeStore();
-    if (!userId && store.employees?.length == 0) {
+    if (store.employees?.length == 0) {
         try {
             store.uploadDemoEmployees();
         } catch (e) {

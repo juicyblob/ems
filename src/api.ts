@@ -1,4 +1,4 @@
-const baseURL = 'http://i964761s.beget.tech/api.php/';
+const baseURL = 'https://juicyblob.ru/api/api.php/';
 
 export const API_ROUTES = {
     categories: `${baseURL}categories`,

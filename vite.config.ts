@@ -8,5 +8,5 @@ export default defineConfig({
     vue(),
     vueDevTools(),
   ],
-  
+  base: '/ems/',
 })
